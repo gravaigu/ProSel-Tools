@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 """
-salvationtools resurection
+salvationtools unbakkup
 
-Tool for manipulating Salvation Bakkup disc archives.
+Tool for extracting files from Salvation Bakkup disc archives.
 
 2022-05-24 : V0.1   Initial version
 """
