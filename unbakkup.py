@@ -143,11 +143,6 @@ def extract_entree(entree, vol_root, apple_single):
                     print('!', end='')
                 if entree['entry_type'] == 0x80:
                     extend_block(f)
-        if entree['entry_type'] == 0x80 and (entree['storage_type'] != 5 or entree['fork'] == 1):
-            dir = os.path.dirname(entree['file_name'])
-            if dir == "":
-                dir = "/"
-            #os.system('acx.sh put -f -d=dd_32mb.po --dir=' + dir + ' ' + file_name + ' --applesingle')
     else:
         print('?', end='', flush=True)
     return n
@@ -175,13 +170,6 @@ def main():
             vol_root = '.' + toc.get_vol_name()
             if extract:
                 shutil.rmtree(vol_root, ignore_errors=True)
-                #if os.path.exists('dd_32mb.po'):
-                #    os.remove('dd_32mb.po')
-                #os.system('acx.sh create -d=dd_32mb.po -f=ProDOS_2_4_2.dsk -n=DD -s=32mb --prodos')
-                #os.system('acx.sh md -p -d=dd_32mb.po SYSTEM')
-                #os.system('acx.sh md -p -d=dd_32mb.po ICONS')
-                #os.system('acx.sh md -p -d=dd_32mb.po UTIL')
-                #os.system('acx.sh md -p -d=dd_32mb.po ORCA')
         for entree in toc.get_content():
             if printcvs:
                 cvs_report.add(entree)
