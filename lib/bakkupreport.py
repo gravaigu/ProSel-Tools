@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-CVSReport class
+BakkupReport class
 
 2022-05-31 : V0.1   Initial version
 """
@@ -9,38 +9,41 @@ CVSReport class
 __version__ = '0.1'
 __author__ = 'Eric Le Bras'
 
-class CVSReport:
+class BakkupReport():
     """
     Generate CVS report for Salvation Bakkup content.
     """
 
-    def __init__(self, filename):
-        try:
-            self.f = open(filename, 'w')
-            self.f.write(
-                '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
-                    'disc',
-                    'name_length',
-                    'file_name',
-                    'start',
-                    'eof',
-                    'access',
-                    'file_type',
-                    'aux_type',
-                    'storage_type',
-                    'fork',
-                    'cyear',
-                    'cmonth',
-                    'cday',
-                    'cmin',
-                    'ch',
-                    'myear',
-                    'mmonth',
-                    'mday',
-                    'mmin',
-                    'mh'))
-        except:
-            raise
+    def __init__(self, fileName):
+        self.f = open(fileName, 'w')
+        self.f.write(
+            '{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{},{}\n'.format(
+                'disc',
+                'name_length',
+                'file_name',
+                'start',
+                'eof',
+                'access',
+                'file_type',
+                'aux_type',
+                'storage_type',
+                'fork',
+                'cyear',
+                'cmonth',
+                'cday',
+                'cmin',
+                'ch',
+                'myear',
+                'mmonth',
+                'mday',
+                'mmin',
+                'mh'))
+
+    def __enter__(self):
+        return self.f
+    
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.f.close()
     
     def add(self, entree):
         self.f.write(
@@ -66,10 +69,7 @@ class CVSReport:
                 entree['mmin'],
                 entree['mh']))
 
-    def close(self):
-        self.f.close()
-
 if __name__ == '__main__':
     # Create empty test report and leave
-    my_cvsreport = CVSReport('cvstest.cvs')
-    my_cvsreport.close()
+    with BakkupReport('cvstest.cvs') as my_cvsreport:
+        my_cvsreport.add({'disc':'disque 1', 'file_name': 'lklkl'})

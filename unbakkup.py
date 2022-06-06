@@ -14,11 +14,11 @@ __author__ = 'Eric Le Bras'
 import io,os,glob,shutil
 from datetime import datetime
 from lib.bakkuptoc import BakkupTOC
-from lib.cvsreport import CVSReport
+from lib.bakkupreport import BakkupReport
 
 def conv_date(date):
     '''Convertit une date en secondes depuis le 1/1/2000'''
-    return int((date-datetime(2000,1,1,0,0)).total_seconds()) - 7200
+    return int((date-datetime(2000,1,1,0,0)).total_seconds()) # - 7200
 
 def extend_file(f, offset):
     '''Extends file to offset, filling with zeroes'''
@@ -150,7 +150,7 @@ def extract_entree(entree, vol_root, apple_single):
 def main():
     extract = True
     printcvs = True
-    outputfile = 'archivelist.cvs'
+    outputfile = 'archivelist.csv'
     discs = glob.glob('/home/eric/Apple2/gs_drive/salvation_backup/salvation_*.po')
     discs.sort()
     disc_num = 0
@@ -158,7 +158,7 @@ def main():
     len_total = 0
     if printcvs:
         try:
-            cvs_report = CVSReport(outputfile)
+            bakkupReport = BakkupReport(outputfile)
         except:
             print("Error: cannot create CVS report", outputfile)
             exit(2)
@@ -172,12 +172,12 @@ def main():
                 shutil.rmtree(vol_root, ignore_errors=True)
         for entree in toc.get_content():
             if printcvs:
-                cvs_report.add(entree)
+                bakkupReport.add(entree)
             if extract:
                 len_total += extract_entree(entree, vol_root, True)
                 file_num += 1
     if printcvs:
-        cvs_report.close()
+        bakkupReport.close()
     if extract:
         print("\nNb d'images disque traitées =", disc_num)
         print("Nb de fichiers extraits =", file_num)
