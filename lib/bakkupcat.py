@@ -2,7 +2,7 @@
 
 """
 BakkupCat class
-Read Catalog disk
+Read Catalog disk from Salvation Bakkup
 
 2022-05-31 : V0.1   Initial version
 """

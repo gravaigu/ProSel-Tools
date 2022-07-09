@@ -6,6 +6,7 @@ BackupTOC class
 Read ProSel Backup disc table of content
 
 2022-05-31 : V0.1   Initial version
+2022-07-09 : V1.0   First revision
 """
 
 __version__ = '0.1'
@@ -52,6 +53,7 @@ class BackupTOC:
                     entree['storage_type'] = buffer[16]
                     entree['fork'] = buffer[17]
                     bindate = int.from_bytes(buffer[18:20], 'little')
+                    entree['cyear2'] = ((bindate & 0b1111111000000000) >> 9)
                     entree['cyear'] = ((bindate & 0b1111111000000000) >> 9) + 1900
                     if entree['cyear'] < 1950:
                         entree['cyear'] += 100
@@ -60,6 +62,7 @@ class BackupTOC:
                     entree['cmin'] = buffer[20]
                     entree['ch'] = buffer[21]
                     bindate = int.from_bytes(buffer[22:24], 'little')
+                    entree['myear2'] = ((bindate & 0b1111111000000000) >> 9)
                     entree['myear'] = ((bindate & 0b1111111000000000) >> 9) + 1900
                     if entree['myear'] < 1950:
                         entree['myear'] += 100

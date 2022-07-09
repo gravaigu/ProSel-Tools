@@ -6,15 +6,18 @@ ProSel-Tools restore
 Tool for extracting files from ProSel Backup disc archives.
 
 2022-05-24 : V0.1   Initial version
+2022-07-09 : V1.0   First revision
 """
 
 __version__ = '0.1'
 __author__ = 'Eric Le Bras'
 
 import io,os,glob,shutil
+import argparse
+import calendar
 from datetime import datetime
-from lib.bakkuptoc import BakkupTOC
-from lib.bakkupreport import BakkupReport
+from lib.backuptoc import BackupTOC
+from lib.backupreport import BackupReport
 
 def conv_date(date):
     '''Convertit une date en secondes depuis le 1/1/2000'''
@@ -80,10 +83,8 @@ def as_file_header(f, entree):
     # 1: Data Fork
     extend_file(f, 0x800)
 
-def extract_entree(entree, vol_root, apple_single):
+def extract_entree(entree, vol_root, apple_single, verbose):
     file_name = vol_root + entree['file_name']
-    print('.', end='', flush=True)
-    #print(file_name)
     if entree['entry_type'] == 0xC0:    # Folder
         #os.system('acx.sh md -p -d=dd_32mb.po ' + entree['file_name'])
         #os.makedirs(file_name, exist_ok=True)
@@ -147,38 +148,67 @@ def extract_entree(entree, vol_root, apple_single):
         print('?', end='', flush=True)
     return n
 
+def print_file_data(entree, verbose):
+    if verbose:
+        if entree['storage_type'] == 5:
+            if entree['fork'] == 1:
+                fork = "Resource fork"
+            else:
+                fork = "Data fork"
+        else:
+            fork = ""
+        print('{:46}{:14}${:02X}  {:2}-{:3}-{:2} {:2}:{:02}'.format(entree['file_name'], \
+            fork, entree['file_type'], entree['mday'], \
+            calendar.month_abbr[entree['mmonth']], \
+            entree['myear2'], \
+            entree['mh'], entree['mmin']), flush=True)
+    else:
+        print('.', end='', flush=True)
+
 def main():
-    extract = True
-    printcsv = True
-    outputfile = 'archivelist.csv'
-    discs = glob.glob('/home/eric/Apple2/gs_drive/salvation_backup/salvation_*.po')
-    discs.sort()
+    description = """ProSel Backup extract tool --
+                     Lists and extracts data from Apple II ProSel Backup discs images."""
+    parser = argparse.ArgumentParser(description = description)
+    parser.add_argument('discs', type=str, nargs='+', help = "backup discs images")
+    parser.add_argument('-x', '--extract', action='store_true', help = "extract files from archive discs")
+    parser.add_argument('-s', '--applesingle', action='store_true', help = "extract as AppleSingle")
+    parser.add_argument('-d', '--dir', default='.', help = "extract to directory")
+    parser.add_argument('-o', '--output', help = "CSV listing filename (default no CSV output)")
+    parser.add_argument('-v', '--verbose', action='store_true', help = "verbose output")
+    args = parser.parse_args()
+
+    if args.output:
+        try:
+            backupReport = BackupReport(args.output)
+        except:
+            print("Error: cannot create CVS report", args.output)
+            exit(2)
+    args.discs.sort()
     disc_num = 0
     file_num = 0
     len_total = 0
-    if printcsv:
-        try:
-            bakkupReport = BakkupReport(outputfile)
-        except:
-            print("Error: cannot create CVS report", outputfile)
-            exit(2)
-    for disc in discs:
+    for disc in args.discs:
         disc_num += 1
-        bakkupTOC = BakkupTOC(disc)
+        backupTOC = BackupTOC(disc)
         if disc_num == 1:
-            vol_root = '.' + bakkupTOC.get_vol_name()
-            if extract:
+            if args.verbose:
+                print("This is a backup of directory " + backupTOC.get_vol_name() + ".")
+                print()
+            vol_root = args.dir + backupTOC.get_vol_name()
+            if args.extract:
                 shutil.rmtree(vol_root, ignore_errors=True)
-        for entree in bakkupTOC.get_content():
-            if printcsv:
-                bakkupReport.add(entree)
-            if extract:
-                len_total += extract_entree(entree, vol_root, True)
+        for entree in backupTOC.get_content():
+            if args.output:
+                backupReport.add(entree)
+            print_file_data(entree, args.verbose)
+            if args.extract:
+                len_total += extract_entree(entree, vol_root, args.applesingle, args.verbose)
                 file_num += 1
-    if printcsv:
-        bakkupReport.close()
-    if extract:
-        print("\nNb d'images disque traitées =", disc_num)
+    if args.output:
+        backupReport.close()
+    print("\n")
+    if args.extract:
+        print("Nb d'images disque traitées =", disc_num)
         print("Nb de fichiers extraits =", file_num)
         print("Nb d'octets écrits =", len_total)
         print("Extraction terminée")
