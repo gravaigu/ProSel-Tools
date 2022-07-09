@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 
 """
-salvationtools unbakkup
+ProSel-Tools restore
 
-Tool for extracting files from Salvation Bakkup disc archives.
+Tool for extracting files from ProSel Backup disc archives.
 
 2022-05-24 : V0.1   Initial version
 """
@@ -18,7 +18,7 @@ from lib.bakkupreport import BakkupReport
 
 def conv_date(date):
     '''Convertit une date en secondes depuis le 1/1/2000'''
-    return int((date-datetime(2000,1,1,0,0)).total_seconds()) # - 7200
+    return int((date-datetime(2000,1,1,0,0)).total_seconds()) - 7200 # local time ?
 
 def extend_file(f, offset):
     '''Extends file to offset, filling with zeroes'''
@@ -149,14 +149,14 @@ def extract_entree(entree, vol_root, apple_single):
 
 def main():
     extract = True
-    printcvs = True
+    printcsv = True
     outputfile = 'archivelist.csv'
     discs = glob.glob('/home/eric/Apple2/gs_drive/salvation_backup/salvation_*.po')
     discs.sort()
     disc_num = 0
     file_num = 0
     len_total = 0
-    if printcvs:
+    if printcsv:
         try:
             bakkupReport = BakkupReport(outputfile)
         except:
@@ -164,19 +164,18 @@ def main():
             exit(2)
     for disc in discs:
         disc_num += 1
-        toc = BakkupTOC()
-        toc.read(disc)
+        bakkupTOC = BakkupTOC(disc)
         if disc_num == 1:
-            vol_root = '.' + toc.get_vol_name()
+            vol_root = '.' + bakkupTOC.get_vol_name()
             if extract:
                 shutil.rmtree(vol_root, ignore_errors=True)
-        for entree in toc.get_content():
-            if printcvs:
+        for entree in bakkupTOC.get_content():
+            if printcsv:
                 bakkupReport.add(entree)
             if extract:
                 len_total += extract_entree(entree, vol_root, True)
                 file_num += 1
-    if printcvs:
+    if printcsv:
         bakkupReport.close()
     if extract:
         print("\nNb d'images disque traitées =", disc_num)

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-BakkupReport class
+BackupReport class
 
 2022-05-31 : V0.1   Initial version
 """
@@ -9,9 +9,9 @@ BakkupReport class
 __version__ = '0.1'
 __author__ = 'Eric Le Bras'
 
-class BakkupReport():
+class BackupReport():
     """
-    Generate CVS report for Salvation Bakkup content.
+    Generate CVS report for Salvation Backup content.
     """
 
     def __init__(self, fileName):
@@ -44,6 +44,9 @@ class BakkupReport():
     
     def __exit__(self, exc_type, exc_value, traceback):
         self.f.close()
+
+    def close(self):
+        self.f.close()
     
     def add(self, entree):
         self.f.write(
@@ -71,5 +74,5 @@ class BakkupReport():
 
 if __name__ == '__main__':
     # Create empty test report and leave
-    with BakkupReport('cvstest.cvs') as my_cvsreport:
+    with BackupReport('cvstest.cvs') as my_cvsreport:
         my_cvsreport.add({'disc':'disque 1', 'file_name': 'lklkl'})

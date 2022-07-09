@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 
 """
-BakkupTOC class
+BackupTOC class
+
+Read ProSel Backup disc table of content
 
 2022-05-31 : V0.1   Initial version
 """
@@ -13,22 +15,13 @@ from multiprocessing.dummy import Array
 from tokenize import String
 
 
-class BakkupTOC:
+class BackupTOC:
     """
-    Salvation Bakkup disk TOC
+    Salvation Backup disk TOC
     """
 
-    def __init__(self) -> None:
-        self.vol_name = ""
+    def __init__(self, disc) -> None:
         self.toc = []
-
-    def get_vol_name(self) -> String:
-        return self.vol_name
-    
-    def get_content(self) -> Array:
-        return self.toc
-    
-    def read(self, disc) -> None:
         with open(disc, 'rb') as f:
             f.seek(0x200)
             buffer = f.read(1)
@@ -75,3 +68,9 @@ class BakkupTOC:
                     entree['mmin'] = buffer[24]
                     entree['mh'] = buffer[25]
                     self.toc.append(entree)
+
+    def get_vol_name(self) -> String:
+        return self.vol_name
+    
+    def get_content(self) -> Array:
+        return self.toc
