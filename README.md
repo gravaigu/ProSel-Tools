@@ -9,3 +9,9 @@ Thirty years passed since I had stopped using my Apple IIGS. Lastly I took it ou
 That's when I realized that, despite being labeled "Salvation Backup", in reality the disks had been written with another popular GS tool of the time: ProSel backup :-) Indeed, the restoration process with ProSel Restore on the IIGS was a success!
 
 Anyway, the Python script is writtent and is also very functionnal. It can extract the files as regular Linux files, or as AppleSingle files (with ProDOS file metadata and resource fork if present). The resulting files (regular or AppleSingle), may then be passed to AppleCommander, if you wish to put them on a ProDOS image.
+
+## The scripts
+
+**prosel-restore.py** The tool to list/extract data from ProSel-16 Backup floppies. Note that the tool is built for backups made with ProSel-16 version 8.2 and newer. Run `./prosel-restore.py --help` for usage documentation.
+
+**make_image.py** Takes an AppleSingle file hierarchy (created with *prosel-restore.py*) and put it on ProDOS image, using *AppleCommander*. This script needs some refactoring!
