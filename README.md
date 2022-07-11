@@ -14,4 +14,4 @@ Anyway, the Python script exists and is also very functionnal. It can extract th
 
 **prosel-restore.py** The tool to list/extract data from ProSel-16 Backup floppies. Note that the tool is built for backups made with ProSel-16 version 8.2 and newer. Run `./prosel-restore.py --help` for usage documentation.
 
-**make_image.py** Takes an AppleSingle file hierarchy (created with *prosel-restore.py*) and put it on ProDOS image, using *AppleCommander*. This script needs some refactoring!
+**make-image.py** Takes an AppleSingle file hierarchy (created with *prosel-restore.py*) and put it on ProDOS image, using *AppleCommander*. This script needs some refactoring!
