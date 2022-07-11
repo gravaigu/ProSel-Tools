@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 
 """
-salvationtools make_image
-
+ProSel-Tools make-image
 Makes a ProDOS image from a file hierarchy
 
 2022-05-31 : V0.1   Initial version
